@@ -1,2 +1,2 @@
-# ansible-ubuntu
-Ansible Ubuntu image build
+# ansible-python
+Ansible Python image build
