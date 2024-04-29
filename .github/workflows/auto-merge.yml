@@ -2,7 +2,7 @@ name: "Dependabot Automerge - Action"
 
 on:
   pull_request:
-  types:
+    types:
       - opened
       - synchronize
       - reopened
