@@ -10,13 +10,14 @@ on:
 permissions:
   pull-requests: write
   contents: write
-  
+
 jobs:
   auto-merge:
     if: github.actor == 'dependabot[bot]' 
     runs-on: ubuntu-latest
     steps:
-      - name: Auto-merge Dependabot PR
-        uses: ridedott/merge-me-action@master
+      - uses: actions/checkout@v2
+      - uses: ahmadnassri/action-dependabot-auto-merge@v2
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          target: minor
+          github-token: ${{ secrets.GITHUB_TOKEN }}
