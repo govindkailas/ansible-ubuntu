@@ -1,23 +1,47 @@
-name: "Dependabot Automerge - Action"
+# name: "Dependabot Automerge - Action"
 
-on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - ready_for_review
+# on:
+#   pull_request:
+#     types:
+#       - opened
+#       - synchronize
+#       - reopened
+#       - ready_for_review
+# permissions:
+#   pull-requests: write
+#   contents: write
+
+# jobs:
+#   auto-merge:
+#     if: github.actor == 'dependabot[bot]' 
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: ahmadnassri/action-dependabot-auto-merge@v2
+#         with:
+#           target: minor
+#           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+name: Dependabot auto-merge
+on: pull_request
+
 permissions:
-  pull-requests: write
   contents: write
+  pull-requests: write
 
 jobs:
-  auto-merge:
-    if: github.actor == 'dependabot[bot]' 
+  dependabot:
     runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
     steps:
-      - uses: actions/checkout@v4
-      - uses: ahmadnassri/action-dependabot-auto-merge@v2
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
         with:
-          target: minor
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Enable auto-merge for Dependabot PRs
+        if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
