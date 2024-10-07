@@ -10,6 +10,7 @@ on:
     branches: [ "main" ]
     paths-ignore:
       - '**.md' ## don't build for readme file updates!!
+      - .github
 
 env:
   # Use docker.io for Docker Hub if empty
