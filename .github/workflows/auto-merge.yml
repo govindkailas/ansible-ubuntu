@@ -1,65 +1,21 @@
-name: auto-merge
+name: Dependabot auto-approve
+on: pull_request
 
-on:
-  pull_request:
-  workflow_dispatch:
+permissions:
+  pull-requests: write
 
 jobs:
-  auto-merge:
+  dependabot:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'govindkailas/ansible-ubuntu'
     steps:
-      - uses: actions/checkout@v2
-      - uses: ahmadnassri/action-dependabot-auto-merge@v2
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d
         with:
-          target: minor
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          
-
-
-# name: "Dependabot Automerge - Action"
-
-# on:
-#   pull_request:
-#     types:
-#       - opened
-#       - synchronize
-#       - reopened
-#       - ready_for_review
-# permissions:
-#   pull-requests: write
-#   contents: write
-
-# jobs:
-#   auto-merge:
-#     if: github.actor == 'dependabot[bot]' 
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
-#       - uses: ahmadnassri/action-dependabot-auto-merge@v2
-#         with:
-#           target: minor
-#           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-# name: Dependabot auto-merge
-# on: pull_request
-
-# permissions:
-#   contents: write
-#   pull-requests: write
-
-# jobs:
-#   dependabot:
-#     runs-on: ubuntu-latest
-#     if: github.actor == 'dependabot[bot]'
-#     steps:
-#       - name: Dependabot metadata
-#         id: metadata
-#         uses: dependabot/fetch-metadata@v2
-#         with:
-#           github-token: "${{ secrets.GITHUB_TOKEN }}"
-#       - name: Enable auto-merge for Dependabot PRs
-#         if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
-#         run: gh pr merge --auto --merge "$PR_URL"
-#         env:
-#           PR_URL: ${{github.event.pull_request.html_url}}
-#           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Approve a PR
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
