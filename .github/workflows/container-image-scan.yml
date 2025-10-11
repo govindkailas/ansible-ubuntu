@@ -19,7 +19,7 @@ jobs:
         run: docker pull ghcr.io/govindkailas/ansible-ubuntu:latest
 
       - name: Run Trivy scan (SARIF output)
-        uses: aquasecurity/trivy-action@v0.16.0
+        uses: aquasecurity/trivy-action@v0.33.1
         with:
           image-ref: 'ghcr.io/govindkailas/ansible-ubuntu:latest'
           format: 'sarif'
