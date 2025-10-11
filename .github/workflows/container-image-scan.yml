@@ -16,12 +16,12 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Pull container image
-        run: docker pull ghcr.io/govindkailas/ansible-ubuntu:latest
+        run: docker pull ghcr.io/govindkailas/ansible-ubuntu:main
 
       - name: Run Trivy scan (SARIF output)
         uses: aquasecurity/trivy-action@0.33.1
         with:
-          image-ref: 'ghcr.io/govindkailas/ansible-ubuntu:latest'
+          image-ref: 'ghcr.io/govindkailas/ansible-ubuntu:main'
           format: 'sarif'
           output: 'trivy-results.sarif'
 
