@@ -1,0 +1,31 @@
+name: Scan Container Image with Trivy
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [docker-publish.yml]
+    types:
+      - completed
+
+jobs:
+  trivy-scan:
+    name: Trivy Scan GHCR Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Docker auth for GHCR
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Pull container image
+        run: docker pull ghcr.io/govindkailas/ansible-ubuntu:latest
+
+      - name: Run Trivy scan (SARIF output)
+        uses: aquasecurity/trivy-action@v0.16.0
+        with:
+          image-ref: 'ghcr.io/govindkailas/ansible-ubuntu:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload SARIF to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: trivy-results.sarif
